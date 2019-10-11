@@ -31,11 +31,11 @@ public class Job implements Comparable<Job>, Cloneable {
         }
     }
 
-    public int getindex() {
+    public int getIndex() {
         return index;
     }
 
-    public int getnbTasks() {
+    public int getNbTasks() {
         return nbTasks;
     }
 
