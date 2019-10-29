@@ -44,7 +44,7 @@ public class Job implements Comparable<Job>, Cloneable {
     }
 
     public void display() {
-        System.out.println("Job " + index + ", total processing time: " + getlength());
+        System.out.println("Job " + index + ", total processing time: " + getLength());
         System.out.println("Prossessing time of the tasks : ");
         for (int i = 0; i < nbTasks; i++) {
             System.out.print("(task " + i + " : " + processingTimes[i] + ") ");
@@ -89,8 +89,8 @@ public class Job implements Comparable<Job>, Cloneable {
      */
 
     public int compareTo(Job obj) {
-        int number1 = obj.getlength();
-        int number2 = getlength();
+        int number1 = obj.getLength();
+        int number2 = getLength();
         if (number1 > number2) {
             return -1;
         } else if (number1 == number2) {
@@ -112,7 +112,7 @@ public class Job implements Comparable<Job>, Cloneable {
     public boolean equals(Object o) {
         if (o == null) return false;
         if (!(o instanceof Job)) return false;
-        return ((Job) o).getindex() == getindex();
+        return ((Job) o).getIndex() == getIndex();
     }
 
 }
