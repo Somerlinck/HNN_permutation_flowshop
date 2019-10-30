@@ -1,3 +1,4 @@
+package model;
 
 
 public class Job implements Comparable<Job>, Cloneable {
