@@ -236,4 +236,12 @@ public class Problem {
         random.getMakespan();
         return random;
     }
+    
+    public Job[] getJobs() {
+    	Job[] res = new Job[this.nbJobs];
+    	for(int i = 0; i < this.nbJobs; i++) {
+    		res[this.jobs[i].getIndex()] = this.jobs[i];
+    	}
+    	return res;
+    }
 }
