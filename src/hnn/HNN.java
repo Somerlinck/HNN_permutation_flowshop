@@ -7,7 +7,7 @@ import model.Problem;
 
 public class HNN {
 	private int size;
-	private ArrayList<ArrayList<Neuron>> network;
+	private Neuron[][] network;
 	private Problem problem;
 	private DistanceMatrix distances;
 	private Job[] jobs;
@@ -17,7 +17,7 @@ public class HNN {
 	//default
 	public HNN() {
 		this.size = 0;
-		this.setNetwork(new ArrayList<ArrayList<Neuron>>());
+		this.setNetwork(new Neuron[0][0]);
 		this.setProblem(new Problem());
 		this.distances = new DistanceMatrix();
 		this.jobs = new Job[0];
@@ -30,14 +30,7 @@ public class HNN {
 	
 	public HNN(int size) {
 		this.size = size;
-		this.setNetwork(new ArrayList<ArrayList<Neuron>>());
-		ArrayList<Neuron> list;
-		for(int i = 0; i < size; i++) {
-			list = new ArrayList<Neuron>();
-			for(int j = 0; j < size; j++) {
-				list.add(new Neuron());
-			}
-		}
+		this.setNetwork(new Neuron[size][size]);
 		this.setProblem(new Problem());
 		this.distances = new DistanceMatrix();
 		this.jobs = new Job[size];
@@ -50,11 +43,10 @@ public class HNN {
 	
 	public HNN(Problem pb, int a, int b, int c, int d, float t) {
 		this.size = pb.getNbJobs();
-		ArrayList<Neuron> list;
+		this.network = new Neuron[this.size][this.size];
 		for(int i = 0; i < this.size; i++) {
-			list = new ArrayList<Neuron>();
 			for(int j = 0; j < this.size; j++) {
-				list.add(new Neuron());
+				this.network[i][j] = new Neuron();
 			}
 		}
 		this.setProblem(pb);
@@ -75,11 +67,11 @@ public class HNN {
 		this.problem = problem;
 	}
 
-	public ArrayList<ArrayList<Neuron>> getNetwork() {
+	public Neuron[][] getNetwork() {
 		return network;
 	}
 
-	public void setNetwork(ArrayList<ArrayList<Neuron>> network) {
+	public void setNetwork(Neuron[][] network) {
 		this.network = network;
 	}
 
@@ -128,8 +120,68 @@ public class HNN {
 		
 	}
 	
-	//TO DO
 	public void display() {
+		if(this.isSolution()) {
+			String row = "(";
+			for(int j = 0; j < this.size; j++) {
+				for(int i = 0; i < this.size; i++) {
+					if(this.network[i][j].getValue() == 1) {
+						row += " " + i + " ";
+						break;
+					}
+				}
+			}
+			row += ")";
+			System.out.println(row);
+		}
+		else {
+			System.out.println("The HNN does not represent a feasible solution.");
+		}
 		
+		String sep = "";
+		for(int k = 0; k < 4*this.size; k++) {
+			sep += "-";
+		}
+		System.out.println(sep);
+		for(int i = 0; i < this.size; i++) {
+			String row = "| ";
+			for(int j = 0; j < this.size; j++) {
+				row +=  network[i][j].getValue() + " | ";
+			}
+			System.out.println(row);
+			System.out.println(sep);
+		}
+	}
+	
+	public boolean isSolution() {
+		// rows
+		for(int i = 0; i < this.size; i++) {
+			int sum = 0;
+			for(int j = 0; j < this.size; j++) {
+				sum += this.network[i][j].getValue();
+				if (sum > 1) {
+					return false;
+				}
+			}
+			if (sum == 0) {
+				return false;
+			}
+		}
+		
+		// columns
+				for(int i = 0; i < this.size; i++) {
+					int sum = 0;
+					for(int j = 0; j < this.size; j++) {
+						sum += this.network[j][i].getValue();
+						if (sum > 1) {
+							return false;
+						}
+					}
+					if (sum == 0) {
+						return false;
+					}
+				}
+		
+		return true;
 	}
 }
