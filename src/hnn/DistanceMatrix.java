@@ -26,6 +26,7 @@ public class DistanceMatrix {
 					Job job_start = this.jobs[i];
 					Job job_end = this.jobs[j];
 					int res = 0;
+					// TO DO
 					this.distances[i][j] = res;
 				}
 			}
