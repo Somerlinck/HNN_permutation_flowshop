@@ -1,5 +1,4 @@
-
-
+package model;
 public class Solution implements Cloneable, Comparable {
     private JobsList schedule;
     private int nbMachines;            	  // number of machines
@@ -75,7 +74,7 @@ public class Solution implements Cloneable, Comparable {
         for (Job j : schedule) {
             System.out.print("Job " + j.getIndex() + " : ");
             for (int i = 0; i < nbMachines; i++) {
-                System.out.print("(op " + i + " à t = "
+                System.out.print("(task " + i + " at t = "
                         + j.getStartingTime(i) + ") ");
             }
             System.out.println();

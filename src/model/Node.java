@@ -1,4 +1,4 @@
-
+package model;
 
 public class Node implements Comparable<Node> {
 
