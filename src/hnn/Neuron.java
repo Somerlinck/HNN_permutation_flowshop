@@ -12,6 +12,7 @@ public class Neuron {
 		return this.value;
 	}
 	
+	// TO DO
 	public void update() {
 		
 	}
