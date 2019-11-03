@@ -1,6 +1,7 @@
 package hnn;
 
 import java.util.ArrayList;
+import java.util.concurrent.ThreadLocalRandom;
 
 import model.Job;
 import model.Problem;
@@ -115,17 +116,28 @@ public class HNN {
 		T = t;
 	}
 	
-	//TO DO
+	// TODO
 	public void run() {
+		float energy = this.getEnergy()-1;
+		while(energy != this.getEnergy()) {
+			energy = this.getEnergy();
+			updateNetwork();
+		}
 		
 	}
 	
+	// TODO
+	private void updateNetwork() {
+		//1. compute Wijkl and Iij
+		//2. update all the u and v
+	}
+
 	public void display() {
 		if(this.isSolution()) {
 			String row = "(";
 			for(int j = 0; j < this.size; j++) {
 				for(int i = 0; i < this.size; i++) {
-					if(this.network[i][j].getValue() == 1) {
+					if(this.network[i][j].getV() == 1) {
 						row += " " + i + " ";
 						break;
 					}
@@ -146,7 +158,7 @@ public class HNN {
 		for(int i = 0; i < this.size; i++) {
 			String row = "| ";
 			for(int j = 0; j < this.size; j++) {
-				row +=  network[i][j].getValue() + " | ";
+				row +=  network[i][j].getV() + " | ";
 			}
 			System.out.println(row);
 			System.out.println(sep);
@@ -158,7 +170,7 @@ public class HNN {
 		for(int i = 0; i < this.size; i++) {
 			int sum = 0;
 			for(int j = 0; j < this.size; j++) {
-				sum += this.network[i][j].getValue();
+				sum += this.network[i][j].getV();
 				if (sum > 1) {
 					return false;
 				}
@@ -172,7 +184,7 @@ public class HNN {
 				for(int i = 0; i < this.size; i++) {
 					int sum = 0;
 					for(int j = 0; j < this.size; j++) {
-						sum += this.network[j][i].getValue();
+						sum += this.network[j][i].getV();
 						if (sum > 1) {
 							return false;
 						}
@@ -184,4 +196,10 @@ public class HNN {
 		
 		return true;
 	}
+	
+	// TODO
+	public float getEnergy() {
+		return 0f;
+	}
+	
 }

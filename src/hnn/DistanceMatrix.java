@@ -14,7 +14,7 @@ public class DistanceMatrix {
 		this.size = 0;
 	}
 	
-	// unfinished
+	// TODO
 	public DistanceMatrix(Job[] jl) {
 		this.jobs = jl;
 		this.size = jl.length;
