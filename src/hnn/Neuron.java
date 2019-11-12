@@ -22,7 +22,7 @@ public class Neuron {
 		return this.v;
 	}
 	
-	public void update(int A, int B, int C, int D, float T, float delta, Neuron[][] network, DistanceMatrix d) {
+	public void update(int A, int B, int C, int D, double T, double delta, Neuron[][] network, DistanceMatrix d) {
 		int n = network.length;
 		
 		//	number of 1s per row

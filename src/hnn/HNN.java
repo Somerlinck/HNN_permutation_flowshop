@@ -13,8 +13,8 @@ public class HNN {
 	private DistanceMatrix distances;
 	private Job[] jobs;
 	private int A, B, C, D;
-	private float T;
-	private float delta;
+	private double T;
+	private double delta;
 	
 	//default
 	public HNN() {
@@ -45,7 +45,7 @@ public class HNN {
 		this.setDelta(0f);
 	}
 	
-	public HNN(Problem pb, int a, int b, int c, int d, float t, float delta, double[][] u_init) {
+	public HNN(Problem pb, int a, int b, int c, int d, double t, double delta, double[][] u_init) {
 		this.size = pb.getNbJobs();
 		this.network = new Neuron[this.size][this.size];
 		for(int i = 0; i < this.size; i++) {
@@ -112,19 +112,19 @@ public class HNN {
 		D = d;
 	}
 
-	public float getT() {
+	public double getT() {
 		return T;
 	}
 
-	public void setT(float t) {
+	public void setT(double t) {
 		T = t;
 	}
 	
-	public float getDelta() {
+	public double getDelta() {
 		return delta;
 	}
 
-	public void setDelta(float delta) {
+	public void setDelta(double delta) {
 		this.delta = delta;
 	}
 	
