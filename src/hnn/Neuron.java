@@ -1,20 +1,21 @@
 package hnn;
 
 public class Neuron {
-	private int value;
+	private float u; // internal state
+	private int v; // external state
 	
 	// default
 	public Neuron() {
-		this.value = 0;
+		this.u = 0;
+		this.v = 0;
 	}
 	
-	public int getValue() {
-		return this.value;
+	public float getU() {
+		return this.u;
 	}
 	
-	// TO DO
-	public void update() {
-		
+	public int getV() {
+		return this.v;
 	}
 
 }
