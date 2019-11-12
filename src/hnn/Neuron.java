@@ -53,7 +53,7 @@ public class Neuron {
 			if(this.i == 0) {
 				sum_d += d.get(this.x, y) * (network[y][this.i + 1].getV() + network[y][n - 1].getV());
 			}
-			if(this.i == n-1) {
+			else if(this.i == n-1) {
 				sum_d += d.get(this.x, y) * (network[y][0].getV() + network[y][this.i - 1].getV());
 			}
 			else{
