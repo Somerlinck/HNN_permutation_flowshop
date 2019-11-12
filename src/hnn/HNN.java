@@ -14,6 +14,7 @@ public class HNN {
 	private Job[] jobs;
 	private int A, B, C, D;
 	private float T;
+	private float delta;
 	
 	//default
 	public HNN() {
@@ -27,6 +28,7 @@ public class HNN {
 		this.setC(0);
 		this.setD(0);
 		this.setT(0f);
+		this.setDelta(0f);
 	}
 	
 	public HNN(int size) {
@@ -40,14 +42,15 @@ public class HNN {
 		this.setC(0);
 		this.setD(0);
 		this.setT(0f);
+		this.setDelta(0f);
 	}
 	
-	public HNN(Problem pb, int a, int b, int c, int d, float t) {
+	public HNN(Problem pb, int a, int b, int c, int d, float t, float delta, double[][] u_init) {
 		this.size = pb.getNbJobs();
 		this.network = new Neuron[this.size][this.size];
 		for(int i = 0; i < this.size; i++) {
 			for(int j = 0; j < this.size; j++) {
-				this.network[i][j] = new Neuron();
+				this.network[i][j] = new Neuron(i, j, u_init[i][j]);
 			}
 		}
 		this.setProblem(pb);
@@ -58,6 +61,7 @@ public class HNN {
 		this.setC(c);
 		this.setD(d);
 		this.setT(t);
+		this.setDelta(delta);
 	}
 
 	public Problem getProblem() {
@@ -116,20 +120,31 @@ public class HNN {
 		T = t;
 	}
 	
-	// TODO
-	public void run() {
-		float energy = this.getEnergy()-1;
-		while(energy != this.getEnergy()) {
-			energy = this.getEnergy();
-			updateNetwork();
-		}
-		
+	public float getDelta() {
+		return delta;
+	}
+
+	public void setDelta(float delta) {
+		this.delta = delta;
 	}
 	
 	// TODO
+	public void run() {
+		while(!isSolution()) {
+			double energy = this.getEnergy()-1;
+			while(energy != this.getEnergy()) {
+				energy = this.getEnergy();
+				updateNetwork();
+			}
+		}
+	}
+	
 	private void updateNetwork() {
-		//1. compute Wijkl and Iij
-		//2. update all the u and v
+		for(int i = 0; i < this.size; i++) {
+			for(int j = 0; j < this.size; j++) {
+				this.network[i][j].update(A, B, C, D, T, delta, network, distances);
+			}
+		}
 	}
 
 	public void display() {
@@ -181,25 +196,72 @@ public class HNN {
 		}
 		
 		// columns
-				for(int i = 0; i < this.size; i++) {
-					int sum = 0;
-					for(int j = 0; j < this.size; j++) {
-						sum += this.network[j][i].getV();
-						if (sum > 1) {
-							return false;
-						}
-					}
-					if (sum == 0) {
-						return false;
-					}
+		for(int i = 0; i < this.size; i++) {
+			int sum = 0;
+			for(int j = 0; j < this.size; j++) {
+				sum += this.network[j][i].getV();
+				if (sum > 1) {
+					return false;
 				}
+			}
+			if (sum == 0) {
+				return false;
+			}
+		}
 		
 		return true;
 	}
 	
-	// TODO
-	public float getEnergy() {
-		return 0f;
+	public double getEnergy() {
+		double sum_a = 0;
+		for(int j = 0; j < this.size; j++) {
+			for(int i = 0; i < this.size; i++) {
+				for(int k = 0; k < this.size; k++) {
+					if(k != i) {
+						sum_a += network[i][j].getV() * network[k][j].getV();
+					}
+				}
+			}
+		}
+		
+		double sum_b = 0;
+		for(int j = 0; j < this.size; j++) {
+			for(int i = 0; i < this.size; i++) {
+				for(int l = 0; l < this.size; l++) {
+					if(l != j) {
+						sum_b += network[i][j].getV() * network[i][l].getV();
+					}
+				}
+			}
+		}
+		
+		double sum_c = -this.size;
+		for(int i = 0; i < this.size; i++) {
+			for(int j = 0; j < this.size; j++) {
+				sum_c += network[i][j].getV();
+			}
+		}
+		
+		double sum_d = 0;
+		for(int i = 0; i < this.size; i++) {
+			for(int k = 0; k < this.size; k++) {
+				if( k!= i) {
+					for(int j = 0; j < this.size; j++) {
+						if(i == 0) {
+							sum_d += distances.get(i, k) * network[i][j].getV() * (network[k][i + 1].getV() + network[k][this.size - 1].getV());
+						}
+						if(i == this.size - 1) {
+							sum_d += distances.get(i, k) * network[i][j].getV() * (network[k][0].getV() + network[k][i - 1].getV());
+						}
+						else{
+							sum_d += distances.get(i, k) * network[i][j].getV() * (network[k][i + 1].getV() + network[k][i - 1].getV());
+						}
+					}
+				}
+			}
+		}
+		
+		return A/2 * sum_a + B/2 * sum_b + C/2 * sum_c*sum_c + D/2 * sum_d;
 	}
 	
 }
