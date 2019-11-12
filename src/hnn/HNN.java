@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 
 import model.Job;
+import model.JobsList;
 import model.Problem;
+import model.Solution;
 
 public class HNN {
 	private int size;
@@ -15,6 +17,7 @@ public class HNN {
 	private int A, B, C, D;
 	private double T;
 	private double delta;
+	private int m; // number of machines
 	
 	//default
 	public HNN() {
@@ -29,6 +32,7 @@ public class HNN {
 		this.setD(0);
 		this.setT(0f);
 		this.setDelta(0f);
+		this.m = 0;
 	}
 	
 	public HNN(int size) {
@@ -43,6 +47,7 @@ public class HNN {
 		this.setD(0);
 		this.setT(0f);
 		this.setDelta(0f);
+		this.m = 0;
 	}
 	
 	public HNN(Problem pb, int a, int b, int c, int d, double t, double delta, double[][] u_init) {
@@ -62,6 +67,7 @@ public class HNN {
 		this.setD(d);
 		this.setT(t);
 		this.setDelta(delta);
+		this.m = pb.getNbMachines();
 	}
 
 	public Problem getProblem() {
@@ -131,10 +137,18 @@ public class HNN {
 	// TODO
 	public void run() {
 		while(!isSolution()) {
+			double min = this.getEnergy();
 			double energy = this.getEnergy()-1;
 			while(energy != this.getEnergy()) {
 				energy = this.getEnergy();
 				updateNetwork();
+				
+				if(this.getEnergy() < min) {
+					min = this.getEnergy();
+					System.out.println(this.getEnergy());
+					display();
+				}
+				
 			}
 		}
 	}
@@ -148,18 +162,20 @@ public class HNN {
 	}
 
 	public void display() {
+		System.out.println();
 		if(this.isSolution()) {
-			String row = "(";
+			JobsList jl = new JobsList();
 			for(int j = 0; j < this.size; j++) {
 				for(int i = 0; i < this.size; i++) {
 					if(this.network[i][j].getV() == 1) {
-						row += " " + i + " ";
+						jl.addJob(jobs[i]);
 						break;
 					}
 				}
 			}
-			row += ")";
-			System.out.println(row);
+			
+			Solution sol = new Solution(jl, this.m);
+			sol.display();
 		}
 		else {
 			System.out.println("The HNN does not represent a feasible solution.");
@@ -250,7 +266,7 @@ public class HNN {
 						if(i == 0) {
 							sum_d += distances.get(i, k) * network[i][j].getV() * (network[k][i + 1].getV() + network[k][this.size - 1].getV());
 						}
-						if(i == this.size - 1) {
+						else if(i == this.size - 1) {
 							sum_d += distances.get(i, k) * network[i][j].getV() * (network[k][0].getV() + network[k][i - 1].getV());
 						}
 						else{
