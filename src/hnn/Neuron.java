@@ -10,6 +10,8 @@ public class Neuron {
 	public Neuron(int i, int j, double u_init) {
 		this.u = u_init;
 		this.v = Math.random();
+//		this.u = 0;
+//		this.v = u_init;
 		this.x = i;
 		this.i = j;
 	}
@@ -22,7 +24,7 @@ public class Neuron {
 		return this.v;
 	}
 	
-	public void update(int A, int B, int C, int D, float T, float delta, Neuron[][] network, DistanceMatrix d) {
+	public void update(int A, int B, int C, int D, double T, double delta, Neuron[][] network, DistanceMatrix d) {
 		int n = network.length;
 		
 		//	number of 1s per row
@@ -53,7 +55,7 @@ public class Neuron {
 			if(this.i == 0) {
 				sum_d += d.get(this.x, y) * (network[y][this.i + 1].getV() + network[y][n - 1].getV());
 			}
-			if(this.i == n-1) {
+			else if(this.i == n-1) {
 				sum_d += d.get(this.x, y) * (network[y][0].getV() + network[y][this.i - 1].getV());
 			}
 			else{
@@ -61,11 +63,16 @@ public class Neuron {
 			}
 		}
 		
-		//	update u
-		this.u = this.getU() + delta * (-this.getU() -A * sum_a -B * sum_b -C * sum_c -D * sum_d);
+//		//	update u : continuous
+//		this.u = this.getU() + delta * (-this.getU() -A * sum_a -B * sum_b -C * sum_c -D * sum_d);
+//		//	update v : continuous
+////		this.v = Math.round(0.5 * (1 + Math.tanh(this.getU()/T)));
+//		this.v = 0.5 * (1 + Math.tanh(this.getU()/T));
 		
-		//	update v
-		this.v = 1/2 * (1 + Math.tanh(this.getU()/T));
+		//	update u : discrete
+		this.u = -A * sum_a -B * sum_b -C * sum_c -D * sum_d;
+		//	update v : discrete
+		this.v = (this.u >= 0.5)? 1.0 : 0.0;
 	}
 
 }

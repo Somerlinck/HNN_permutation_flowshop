@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 
 import model.Job;
+import model.JobsList;
 import model.Problem;
+import model.Solution;
 
 public class HNN {
 	private int size;
@@ -13,8 +15,9 @@ public class HNN {
 	private DistanceMatrix distances;
 	private Job[] jobs;
 	private int A, B, C, D;
-	private float T;
-	private float delta;
+	private double T;
+	private double delta;
+	private int m; // number of machines
 	
 	//default
 	public HNN() {
@@ -29,6 +32,7 @@ public class HNN {
 		this.setD(0);
 		this.setT(0f);
 		this.setDelta(0f);
+		this.m = 0;
 	}
 	
 	public HNN(int size) {
@@ -43,9 +47,10 @@ public class HNN {
 		this.setD(0);
 		this.setT(0f);
 		this.setDelta(0f);
+		this.m = 0;
 	}
 	
-	public HNN(Problem pb, int a, int b, int c, int d, float t, float delta, double[][] u_init) {
+	public HNN(Problem pb, int a, int b, int c, int d, double t, double delta, double[][] u_init) {
 		this.size = pb.getNbJobs();
 		this.network = new Neuron[this.size][this.size];
 		for(int i = 0; i < this.size; i++) {
@@ -62,6 +67,7 @@ public class HNN {
 		this.setD(d);
 		this.setT(t);
 		this.setDelta(delta);
+		this.m = pb.getNbMachines();
 	}
 
 	public Problem getProblem() {
@@ -112,61 +118,87 @@ public class HNN {
 		D = d;
 	}
 
-	public float getT() {
+	public double getT() {
 		return T;
 	}
 
-	public void setT(float t) {
+	public void setT(double t) {
 		T = t;
 	}
 	
-	public float getDelta() {
+	public double getDelta() {
 		return delta;
 	}
 
-	public void setDelta(float delta) {
+	public void setDelta(double delta) {
 		this.delta = delta;
 	}
 	
 	// TODO
 	public void run() {
-		while(!isSolution()) {
+		int iter = 0;
+		double min = this.getEnergy();
+		while(!isSolution() || iter < 1) {
+			iter += 1;
+			int count = 0;
 			double energy = this.getEnergy()-1;
-			while(energy != this.getEnergy()) {
-				energy = this.getEnergy();
+//			while(energy != this.getEnergy()) {
+			while(count < 5) {
 				updateNetwork();
+				if (energy == this.getEnergy()) {
+					count += 1;
+				}
+				else {
+					energy = this.getEnergy();
+				}
+				if(this.getEnergy() < min) {
+					min = this.getEnergy();
+					System.out.println(min);
+					display();
+				}
 			}
 		}
+		display();
 	}
 	
 	private void updateNetwork() {
-		for(int i = 0; i < this.size; i++) {
-			for(int j = 0; j < this.size; j++) {
-				this.network[i][j].update(A, B, C, D, T, delta, network, distances);
-			}
+		//	continuous model
+//		for(int i = 0; i < this.size; i++) {
+//			for(int j = 0; j < this.size; j++) {
+//				this.network[i][j].update(A, B, C, D, T, delta, network, distances);
+//			}
+//		}
+		
+		//	discrete model
+		for(int k = 0; k < 5 * this.size*this.size; k++ ) {
+			int randomI = ThreadLocalRandom.current().nextInt(0, this.size);
+			int randomJ = ThreadLocalRandom.current().nextInt(0, this.size);
+			this.network[randomI][randomJ].update(A, B, C, D, T, delta, network, distances);
 		}
 	}
 
 	public void display() {
+		System.out.println();
 		if(this.isSolution()) {
-			String row = "(";
+			JobsList jl = new JobsList();
 			for(int j = 0; j < this.size; j++) {
 				for(int i = 0; i < this.size; i++) {
 					if(this.network[i][j].getV() == 1) {
-						row += " " + i + " ";
+						jl.addJob(jobs[i]);
 						break;
 					}
 				}
 			}
-			row += ")";
-			System.out.println(row);
+			
+			Solution sol = new Solution(jl, this.m);
+			sol.display();
 		}
 		else {
 			System.out.println("The HNN does not represent a feasible solution.");
 		}
 		
-		String sep = "";
-		for(int k = 0; k < 4*this.size; k++) {
+		String sep = " ";
+		for(int k = 0; k < 6*this.size; k++) {
 			sep += "-";
 		}
 		System.out.println(sep);
@@ -250,7 +282,7 @@ public class HNN {
 						if(i == 0) {
 							sum_d += distances.get(i, k) * network[i][j].getV() * (network[k][i + 1].getV() + network[k][this.size - 1].getV());
 						}
-						if(i == this.size - 1) {
+						else if(i == this.size - 1) {
 							sum_d += distances.get(i, k) * network[i][j].getV() * (network[k][0].getV() + network[k][i - 1].getV());
 						}
 						else{
