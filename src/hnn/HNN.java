@@ -136,28 +136,44 @@ public class HNN {
 	
 	// TODO
 	public void run() {
-		while(!isSolution()) {
-			double min = this.getEnergy();
+		int iter = 0;
+		double min = this.getEnergy();
+		while(!isSolution() || iter < 1) {
+			iter += 1;
+			int count = 0;
 			double energy = this.getEnergy()-1;
-			while(energy != this.getEnergy()) {
-				energy = this.getEnergy();
+//			while(energy != this.getEnergy()) {
+			while(count < 5) {
 				updateNetwork();
-				
+				if (energy == this.getEnergy()) {
+					count += 1;
+				}
+				else {
+					energy = this.getEnergy();
+				}
 				if(this.getEnergy() < min) {
 					min = this.getEnergy();
-					System.out.println(this.getEnergy());
+					System.out.println(min);
 					display();
 				}
-				
 			}
 		}
+		display();
 	}
 	
 	private void updateNetwork() {
-		for(int i = 0; i < this.size; i++) {
-			for(int j = 0; j < this.size; j++) {
-				this.network[i][j].update(A, B, C, D, T, delta, network, distances);
-			}
+		//	continuous model
+//		for(int i = 0; i < this.size; i++) {
+//			for(int j = 0; j < this.size; j++) {
+//				this.network[i][j].update(A, B, C, D, T, delta, network, distances);
+//			}
+//		}
+		
+		//	discrete model
+		for(int k = 0; k < 5 * this.size*this.size; k++ ) {
+			int randomI = ThreadLocalRandom.current().nextInt(0, this.size);
+			int randomJ = ThreadLocalRandom.current().nextInt(0, this.size);
+			this.network[randomI][randomJ].update(A, B, C, D, T, delta, network, distances);
 		}
 	}
 

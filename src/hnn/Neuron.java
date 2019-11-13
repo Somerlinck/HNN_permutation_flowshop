@@ -10,6 +10,8 @@ public class Neuron {
 	public Neuron(int i, int j, double u_init) {
 		this.u = u_init;
 		this.v = Math.random();
+//		this.u = 0;
+//		this.v = u_init;
 		this.x = i;
 		this.i = j;
 	}
@@ -61,11 +63,16 @@ public class Neuron {
 			}
 		}
 		
-		//	update u
-		this.u = this.getU() + delta * (-this.getU() -A * sum_a -B * sum_b -C * sum_c -D * sum_d);
+//		//	update u : continuous
+//		this.u = this.getU() + delta * (-this.getU() -A * sum_a -B * sum_b -C * sum_c -D * sum_d);
+//		//	update v : continuous
+////		this.v = Math.round(0.5 * (1 + Math.tanh(this.getU()/T)));
+//		this.v = 0.5 * (1 + Math.tanh(this.getU()/T));
 		
-		//	update v
-		this.v = 1/2 * (1 + Math.tanh(this.getU()/T));
+		//	update u : discrete
+		this.u = -A * sum_a -B * sum_b -C * sum_c -D * sum_d;
+		//	update v : discrete
+		this.v = (this.u >= 0.5)? 1.0 : 0.0;
 	}
 
 }
