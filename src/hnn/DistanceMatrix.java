@@ -37,7 +37,6 @@ public class DistanceMatrix {
 						res += job_end.getStartingTime(i1) - (job_start.getStartingTime(i1) + job_start.getProcessingTime(i1));
 					}
 					
-					System.out.println(res);
 					this.distances[i][j] = res;
 				}
 			}

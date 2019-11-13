@@ -197,8 +197,8 @@ public class HNN {
 			System.out.println("The HNN does not represent a feasible solution.");
 		}
 		
-		String sep = "";
-		for(int k = 0; k < 4*this.size; k++) {
+		String sep = " ";
+		for(int k = 0; k < 6*this.size; k++) {
 			sep += "-";
 		}
 		System.out.println(sep);
