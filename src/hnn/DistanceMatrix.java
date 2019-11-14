@@ -6,21 +6,24 @@ import model.Solution;
 
 public class DistanceMatrix {
 	private Job[] jobs;
-	private int[][] distances;
+	private double[][] distances;
 	private int size;
 	
 	//default
 	public DistanceMatrix() {
 		this.jobs = new Job[0];
-		this.setDistances(new int[0][0]);
+		this.setDistances(new double[0][0]);
 		this.size = 0;
 	}
 	
 	public DistanceMatrix(Job[] jl) {
 		this.jobs = jl;
 		this.size = jl.length;
-		this.setDistances(new int[this.size][this.size]);
+		this.setDistances(new double[this.size][this.size]);
 		int nbMachines = this.jobs[0].getNbTasks();
+		
+		int min = Integer.MAX_VALUE;
+		int max = Integer.MIN_VALUE;
 		
 		for(int i = 0; i < this.size; i++) {
 			for(int j = 0; j < this.size; j++) {
@@ -38,20 +41,32 @@ public class DistanceMatrix {
 					}
 					
 					this.distances[i][j] = res;
+					if (res < min) {
+						min = res;
+					}
+					if (res > max) {
+						max = res;
+					}
 				}
+			}
+		}
+		
+		for(int i = 0; i < this.size; i++) {
+			for(int j = 0; j < this.size; j++) {
+				this.distances[i][j] = (this.distances[i][j] - min) / (max - min);
 			}
 		}
 	}
 
-	public int[][] getDistances() {
+	public double[][] getDistances() {
 		return distances;
 	}
 
-	public void setDistances(int[][] distances) {
+	public void setDistances(double[][] distances) {
 		this.distances = distances;
 	}
 	
-	public int get(int i, int j) {
+	public double get(int i, int j) {
 		return this.distances[i][j];
 	}
 

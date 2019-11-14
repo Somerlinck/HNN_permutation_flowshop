@@ -8,10 +8,10 @@ public class Neuron {
 	
 	// default
 	public Neuron(int i, int j, double u_init) {
-		this.u = u_init;
-		this.v = Math.random();
-//		this.u = 0;
-//		this.v = u_init;
+//		this.u = u_init;
+//		this.v = Math.random();
+		this.u = 0;
+		this.v = u_init;
 		this.x = i;
 		this.i = j;
 	}
@@ -50,7 +50,7 @@ public class Neuron {
 		}
 		
 		// distance from neighbors
-		int sum_d = 0;
+		double sum_d = 0;
 		for(int y = 0; y < n; y++) {
 			if(this.i == 0) {
 				sum_d += d.get(this.x, y) * (network[y][this.i + 1].getV() + network[y][n - 1].getV());
