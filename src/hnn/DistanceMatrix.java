@@ -36,8 +36,9 @@ public class DistanceMatrix {
 					li.addJob(job_start); li.addJob(job_end);
 					Solution schedule = new Solution(li, nbMachines);
 					
-					for(int i1 = 0; i1 < nbMachines; i1++) {
-						res += job_end.getStartingTime(i1) - (job_start.getStartingTime(i1) + job_start.getProcessingTime(i1));
+					for(int i1 = 0; i1 < nbMachines-1; i1++) {
+//						res += job_end.getStartingTime(i1) - (job_start.getStartingTime(i1) + job_start.getProcessingTime(i1));
+						res += job_end.getStartingTime(i1) - job_start.getStartingTime(i1+1);
 					}
 					
 					this.distances[i][j] = res;
